@@ -1,33 +1,90 @@
 __author__ = 'Ofri'
 
-def FindingShapeletBF(dataset, maxlen, minlen):
-    pass
+import numpy as np
+import math
+from random import uniform
+
+from shapelets.utils.utils import GenerateSubsequences, GenerateAllSequences, Gain
 
 
-def GenerateCandidates(dataset, maxlen, minlen):
-    pass
+def FindingShapeletBF(D, maxlen, minlen):
+    bsf_gain = 0
+    bsf_shapelet = None
+    for candidates in GenerateCandidates(D, maxlen, minlen):
+        for S in candidates:
+            gain = CheckCandidate(D, S)
+            if gain > bsf_gain:
+                bsf_gain = gain
+                bsf_shapelet = S
+    return bsf_shapelet
 
 
-def CheckCandidate(dataset, candidate):
-    pass
+def GenerateCandidates(D, maxlen, minlen):
+    for l in reversed(xrange(minlen, maxlen)):
+        for T in D:
+            for s in GenerateAllSequences(T, l):
+                yield s
 
 
-def CalculateInformationGain(distance_hist):
+def OptimalSplitPoint(obj_hist):
+    bestChosen = -1
+    bestGain = -1
+    sortedItems = sorted(obj_hist.items(), key=lambda x: x[0])
+    for i in range(1, len(sortedItems)):
+        chosen = uniform(sortedItems[i - 1][0], sortedItems[i][0])
+        print "between %s and %s choose %s" % (sortedItems[i - 1][0], sortedItems[i][0], chosen)
+        D1 = np.array([x[1] for x in sortedItems[:i]])
+        D2 = np.array([x[1] for x in sortedItems[i:]])
+        gain = Gain(D1 + D2, D1, D2)
+        if gain > bestGain:
+            bestGain = gain
+            bestChosen = chosen
+    return bestChosen
+
+
+def CheckCandidate(D, S):
+    objects_histogram = {}
+    for T in D:
+        dist = SubsequenceDistanceEarlyAbandon(T, S)
+        if dist not in objects_histogram:
+            objects_histogram[dist] = []
+        objects_histogram[dist].append(T)
+    return CalculateInformationGain(objects_histogram)
+
+
+def CalculateInformationGain(obj_hist):
+    # TODO combine with @OptimalSplitPoint
+    split_dist = OptimalSplitPoint(obj_hist)
+    D1 = []
+    D2 = []
+    for d in obj_hist.iteritems():
+        if d[0] < split_dist:
+            D1 += d[1]
+        else:
+            D2 += d[1]
+    return Gain(D1 + D2, D1, D2)
+
+
+def EntropyEarlyPrune(bsf_gain, dist_hist, C_A, C_B):
+    # TODO implement
     pass
 
 
 def SubsequenceDistanceEarlyAbandon(T, S):
-    pass
+    min_dist = np.inf
+    stop = False
+    for S_i in GenerateAllSequences(T, S.shape[0]):
+        sum_dist = 0
+        for k in xrange(1, S.shape[0]):
+            sum_dist = sum_dist + math.pow((S_i[k] - S[k]), 2)
+            if sum_dist > min_dist:
+                stop = True
+                break
+        if not stop:
+            min_dist = sum_dist
+    return min_dist
 
 
-def EntropyEarlyPrune(bsf_gain, dist_hist, C_A, C_B):
-    pass
-
-def SubsequenceDist(T,S):
-    pass
-
-def extractSubsequences(sequence,windowSize):
-    pass
 
 if __name__ == "__main__":
     print "started"
