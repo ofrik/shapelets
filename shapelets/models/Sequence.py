@@ -25,6 +25,12 @@ class Sequence(object):
             return False
         return self.getLabel() == other.getLabel() and self.getValues() == other.getValues()
 
+    def __len__(self):
+        return len(self.values)
+
+    def __getitem__(self, item):
+        return self.values[item]
+
     @staticmethod
     def loadCSVSequence(path, field, compression="gzip"):
         df = pd.read_csv(path, compression=compression)

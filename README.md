@@ -7,11 +7,11 @@ An implementation of shapelets extraction base on a paper found [here](http://al
 - [x] implement sequence generation functions
 - [x] test sequence generation functions
 - [x] implement candidate generation function
-- [ ] test candidate generation function
-- [ ] implement gain function
-- [ ] test gain function
+- [x] test candidate generation function
+- [x] implement gain function
+- [x] test gain function
 - [x] implement sequence distance with early abandon function
-- [ ] test sequence distance with early abandon function
+- [x] test sequence distance with early abandon function
 - [x] implement optimal split point function
 - [ ] test optimal split point function
 - [x] implement calculate information gain function

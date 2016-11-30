@@ -1,6 +1,6 @@
 import unittest
-from shapelets.utils.utils import GenerateSubsequences,GenerateAllSequences,Gain
-import numpy as np
+from shapelets.utils.utils import GenerateSubsequences,Gain
+from shapelets.models import *
 
 class test_utils(unittest.TestCase):
     def test_generateSubsequences(self):
@@ -10,17 +10,18 @@ class test_utils(unittest.TestCase):
         self.assertEqual(len(res[0]),3)
         self.assertEqual(list(res[0]),[0,1,2])
 
-    def test_GenerateAllSequences(self):
-        sequences = GenerateAllSequences([i for i in range(4)],2)
-        res = list(sequences)
-        self.assertEqual(len(res),7)
-        self.assertIn([0],res)
-        self.assertIn([0,1],res)
-
     def test_Gain(self):
-        # TODO implement
-        self.fail()
-
+        D = Dataset(["resources/disks/failed/5XW0L6BV.csv.gz", "resources/disks/run/5VMJW1LH.csv.gz"], "smart_1_normalized")
+        D1 = Dataset(["resources/disks/failed/5XW0L6BV.csv.gz"],"smart_1_normalized")
+        D2 = Dataset(["resources/disks/run/5VMJW1LH.csv.gz"], "smart_1_normalized")
+        res = Gain(D,D1,D2)
+        self.assertAlmostEqual(res,0.69,delta=0.01)
+        D = Dataset(["resources/disks/failed/5XW0L6BV.csv.gz", "resources/disks/run/5VMJW1LH.csv.gz","resources/disks/run/5VMJW1LH.csv.gz"],
+                    "smart_1_normalized")
+        D1 = Dataset(["resources/disks/failed/5XW0L6BV.csv.gz","resources/disks/run/5VMJW1LH.csv.gz"], "smart_1_normalized")
+        D2 = Dataset(["resources/disks/run/5VMJW1LH.csv.gz"], "smart_1_normalized")
+        res = Gain(D, D1, D2)
+        self.assertAlmostEqual(res, 0.17,delta=0.01)
 
 if __name__ == '__main__':
     unittest.main()

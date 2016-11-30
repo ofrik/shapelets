@@ -48,7 +48,7 @@ class Dataset(object):
         #     dist[key] = value/l
         return [(key,float(value)/l) for (key,value) in self.classes.iteritems()]
 
-    def __sizeof__(self):
+    def __len__(self):
         return len(self.sequencesLocations)
 
 

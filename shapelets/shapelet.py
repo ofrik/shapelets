@@ -4,13 +4,13 @@ import numpy as np
 import math
 from random import uniform
 
-from shapelets.utils.utils import GenerateSubsequences, GenerateAllSequences, Gain
+from shapelets.utils.utils import GenerateSubsequences, Gain
 
 
 def FindingShapeletBF(D, maxlen, minlen):
     bsf_gain = 0
     bsf_shapelet = None
-    for candidates in GenerateCandidates(D, maxlen, minlen):
+    for candidates in GenerateCandidates(D, minlen,maxlen):
         for S in candidates:
             gain = CheckCandidate(D, S)
             if gain > bsf_gain:
@@ -19,10 +19,10 @@ def FindingShapeletBF(D, maxlen, minlen):
     return bsf_shapelet
 
 
-def GenerateCandidates(D, maxlen, minlen):
-    for l in reversed(xrange(minlen, maxlen)):
-        for T in D:
-            for s in GenerateAllSequences(T, l):
+def GenerateCandidates(D, minlen, maxlen):
+    for l in reversed(xrange(minlen, maxlen+1)):
+        for T in D.getSequencesGenerator():
+            for s in GenerateSubsequences(T.getValues(), l):
                 yield s
 
 
@@ -44,7 +44,7 @@ def OptimalSplitPoint(obj_hist):
 
 def CheckCandidate(D, S):
     objects_histogram = {}
-    for T in D:
+    for T in D.getSequencesGenerator():
         dist = SubsequenceDistanceEarlyAbandon(T, S)
         if dist not in objects_histogram:
             objects_histogram[dist] = []
@@ -73,9 +73,9 @@ def EntropyEarlyPrune(bsf_gain, dist_hist, C_A, C_B):
 def SubsequenceDistanceEarlyAbandon(T, S):
     min_dist = np.inf
     stop = False
-    for S_i in GenerateAllSequences(T, S.shape[0]):
+    for S_i in GenerateSubsequences(T.getValues(), len(S)):
         sum_dist = 0
-        for k in xrange(1, S.shape[0]):
+        for k in xrange(0, len(S)):
             sum_dist = sum_dist + math.pow((S_i[k] - S[k]), 2)
             if sum_dist > min_dist:
                 stop = True
