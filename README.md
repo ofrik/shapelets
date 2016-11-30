@@ -16,9 +16,8 @@ An implementation of shapelets extraction base on a paper found [here](http://al
 - [x] test optimal split point function
 - [x] implement calculate information gain function
 - [x] test implement calculate information gain function
-- [ ] implement check candidate function
-- [ ] test check candidate function
+- [x] implement check candidate function
+- [x] test check candidate function
 - [ ] implement entropy early pruning function
 - [ ] test entropy early pruning function
 - [x] implement find shapelets brute force function
-- [ ] test find shapelets brute force function

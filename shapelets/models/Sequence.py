@@ -7,9 +7,10 @@ class Sequence(object):
     values = []
     label = None
 
-    def __init__(self, values, label):
+    def __init__(self, values, label, src=""):
         self.values = values
         self.label = label
+        self.src = src
 
     def getValues(self):
         return self.values
@@ -19,6 +20,9 @@ class Sequence(object):
 
     def addValue(self, val):
         self.values.append(val)
+
+    def getSrc(self):
+        return self.src
 
     def __eq__(self, other):
         if type(other) != Sequence:
@@ -36,7 +40,7 @@ class Sequence(object):
         df = pd.read_csv(path, compression=compression)
         l = "failed" if "failed" in path else "run"
         # TODO: get only window of the sequence that will be defined
-        return Sequence(list(df[field].values), l)
+        return Sequence(list(df[field].values), l, src=path)
 
 
 if __name__ == "__main__":

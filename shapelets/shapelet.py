@@ -6,7 +6,7 @@ from random import uniform
 
 from shapelets.utils.utils import GenerateSubsequences, Gain
 from shapelets.models import *
-
+from Queue import Queue
 
 def FindingShapeletBF(D, maxlen, minlen):
     bsf_gain = 0
@@ -18,6 +18,17 @@ def FindingShapeletBF(D, maxlen, minlen):
                 bsf_gain = gain
                 bsf_shapelet = S
     return bsf_shapelet
+
+def FindKShapelet(D,K,maxlen,minlen):
+    bsf_gain = 0
+    kbest = []
+    for candidates in GenerateCandidates(D, minlen, maxlen):
+        for S in candidates:
+            gain = CheckCandidate(D, S)
+            if gain > bsf_gain:
+                bsf_gain = gain
+                kbest = kbest.append(S)[-K:]
+    return kbest
 
 
 def GenerateCandidates(D, minlen, maxlen):
@@ -32,7 +43,7 @@ def CheckCandidate(D, S):
         dist = SubsequenceDistanceEarlyAbandon(T, S)
         if dist not in objects_histogram:
             objects_histogram[dist] = []
-        objects_histogram[dist].append(T)
+        objects_histogram[dist].append(T.getSrc())
     return CalculateInformationGain(objects_histogram,D.getField())
 
 
