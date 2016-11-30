@@ -1,4 +1,7 @@
 from unittest import TestCase
+from shapelets.models.Dataset import Dataset
+from shapelets.models.Sequence import Sequence
+import types
 
 __author__ = 'Ofri'
 
@@ -8,29 +11,49 @@ if __name__ == "__main__":
 
 class TestDataset(TestCase):
     def test_addSequence(self):
-        # TODO implement
-        self.fail()
+        d = Dataset(field="smart_1_normalized")
+        self.assertEqual(len(d.getSequencesLocations()), 0)
+        d.addSequenceLocation("resources/disks/failed/5XW0L6BV.csv.gz")
+        self.assertEqual(len(d.getSequencesLocations()), 1)
+        self.assertItemsEqual(d.getSequencesLocations(), ["resources/disks/failed/5XW0L6BV.csv.gz"])
 
     def test_addSequences(self):
-        # TODO implement
-        self.fail()
+        lst = ["resources/disks/failed/5XW0L6BV.csv.gz", "resources/disks/run/5VMJW1LH.csv.gz"]
+        d = Dataset(field="smart_1_normalized")
+        self.assertEqual(len(d.getSequencesLocations()), 0)
+        d.addSequencesLocations(lst)
+        self.assertItemsEqual(d.getSequencesLocations(), lst)
 
     def test_setField(self):
-        # TODO implement
-        self.fail()
+        d = Dataset()
+        self.assertEqual(d.getField(),None)
+        d.setField("test")
+        self.assertEqual(d.getField(),"test")
 
     def test_getClasses(self):
-        # TODO implement
-        self.fail()
+        lst = ["resources/disks/failed/5XW0L6BV.csv.gz", "resources/disks/run/5VMJW1LH.csv.gz"]
+        d = Dataset(lst, "smart_1_normalized")
+        self.assertDictEqual(d.getClasses(),{"failed":1,"run":1})
 
-    def test_getSequences(self):
-        # TODO implement
-        self.fail()
+    def test_getSequencesLocations(self):
+        lst = ["resources/disks/failed/5XW0L6BV.csv.gz","resources/disks/run/5VMJW1LH.csv.gz"]
+        d = Dataset(lst,"smart_1_normalized")
+        self.assertItemsEqual(d.getSequencesLocations(), lst)
 
     def test_getSequencesGenerator(self):
-        # TODO implement
-        self.fail()
+        lst = ["resources/disks/failed/5XW0L6BV.csv.gz", "resources/disks/run/5VMJW1LH.csv.gz"]
+        d = Dataset(lst, "smart_1_normalized")
+        s1 = Sequence.loadCSVSequence("resources/disks/failed/5XW0L6BV.csv.gz","smart_1_normalized")
+        s2 = Sequence.loadCSVSequence("resources/disks/run/5VMJW1LH.csv.gz","smart_1_normalized")
+        itr = iter(d.getSequencesGenerator())
+        s3 = itr.next()
+        s4 = itr.next()
+        self.assertEqual(s1,s3)
+        self.assertEqual(s2,s4)
+        d = Dataset(lst, "smart_1_normalized")
+        self.assertEqual(type(d.getSequencesGenerator()), types.GeneratorType)
 
     def test_getClassesProb(self):
-        # TODO implement
-        self.fail()
+        lst = ["resources/disks/failed/5XW0L6BV.csv.gz", "resources/disks/run/5VMJW1LH.csv.gz"]
+        d = Dataset(lst, "smart_1_normalized")
+        self.assertItemsEqual(d.getClassesProb(),[("failed",0.5),("run",0.5)])
