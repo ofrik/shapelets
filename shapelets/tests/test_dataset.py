@@ -57,3 +57,12 @@ class TestDataset(TestCase):
         lst = ["resources/disks/failed/5XW0L6BV.csv.gz", "resources/disks/run/5VMJW1LH.csv.gz"]
         d = Dataset(lst, "smart_1_normalized")
         self.assertItemsEqual(d.getClassesProb(),[("failed",0.5),("run",0.5)])
+
+    def test___add__(self):
+        lst = ["resources/disks/failed/5XW0L6BV.csv.gz", "resources/disks/run/5VMJW1LH.csv.gz"]
+        d = Dataset(lst, "smart_1_normalized")
+        d2 = Dataset(lst, "smart_1_normalized")
+        d3 = d+d2
+        self.assertEqual(len(d3),4)
+        self.assertDictEqual(d3.getClasses(),{"failed":2,"run":2})
+        self.assertEqual(d3.getField(),"smart_1_normalized")

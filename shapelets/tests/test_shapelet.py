@@ -1,6 +1,6 @@
 import unittest
 
-from shapelets.shapelet import GenerateCandidates,SubsequenceDistanceEarlyAbandon
+from shapelets.shapelet import GenerateCandidates,SubsequenceDistanceEarlyAbandon,CalculateInformationGain
 from shapelets.models import *
 
 class test_shapelet(unittest.TestCase):
@@ -13,14 +13,23 @@ class test_shapelet(unittest.TestCase):
         res = list(GenerateCandidates(d, 1, 2))
         self.assertEqual(len(res), 1134)
 
-    def test_OptimalSplitPoint(self):
-        self.fail()
-
     def test_CheckCandidate(self):
         self.fail()
 
     def test_CalculateInformationGain(self):
-        self.fail()
+        dist = {
+            0.1:["resources/disks/failed/5XW0L6BV.csv.gz","resources/disks/failed/5XW0L6BV.csv.gz"],
+            0.6: ["resources/disks/run/5VMJW1LH.csv.gz"],
+            0.7: ["resources/disks/failed/5XW0L6BV.csv.gz"],
+            0.8: ["resources/disks/run/5VMJW1LH.csv.gz"],
+            0.85: ["resources/disks/run/5VMJW1LH.csv.gz"],
+            0.9: ["resources/disks/run/5VMJW1LH.csv.gz"],
+            0.3:["resources/disks/failed/5XW0L6BV.csv.gz"],
+            0.4:["resources/disks/failed/5XW0L6BV.csv.gz"],
+            0.5:["resources/disks/failed/5XW0L6BV.csv.gz"]
+        }
+        res = CalculateInformationGain(dist,"smart_1_normalized")
+        self.assertAlmostEqual(res,0.42,delta=0.01)
 
     def test_EntropyEarlyPrune(self):
         self.fail()

@@ -35,6 +35,7 @@ class Sequence(object):
     def loadCSVSequence(path, field, compression="gzip"):
         df = pd.read_csv(path, compression=compression)
         l = "failed" if "failed" in path else "run"
+        # TODO: get only window of the sequence that will be defined
         return Sequence(list(df[field].values), l)
 
 

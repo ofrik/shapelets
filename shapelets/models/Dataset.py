@@ -3,9 +3,9 @@ __author__ = 'Ofri'
 from collections import Counter
 from Sequence import Sequence
 
-class Dataset(object):
 
-    def __init__(self, sequencesLocations=None,field=None):
+class Dataset(object):
+    def __init__(self, sequencesLocations=None, field=None):
         self.field = field
         self.classes = Counter()
         self.sequencesLocations = []
@@ -15,14 +15,14 @@ class Dataset(object):
 
     def addSequenceLocation(self, sequenceLocation):
         self.sequencesLocations.append(sequenceLocation)
-        seq = Sequence.loadCSVSequence(sequenceLocation,self.field)
+        seq = Sequence.loadCSVSequence(sequenceLocation, self.field)
         self.classes[seq.getLabel()] += 1
 
-    def addSequencesLocations(self, sequencesLocation):
-        for s in sequencesLocation:
+    def addSequencesLocations(self, sequencesLocations):
+        for s in sequencesLocations:
             self.addSequenceLocation(s)
 
-    def setField(self,field):
+    def setField(self, field):
         self.field = field
 
     def getField(self):
@@ -35,21 +35,29 @@ class Dataset(object):
         return self.sequencesLocations
 
     def getSequences(self):
-        return [Sequence.loadCSVSequence(path,self.field) for path in self.sequencesLocations]
+        return [Sequence.loadCSVSequence(path, self.field) for path in self.sequencesLocations]
 
     def getSequencesGenerator(self):
         for path in self.sequencesLocations:
-            yield Sequence.loadCSVSequence(path,self.field)
+            yield Sequence.loadCSVSequence(path, self.field)
 
     def getClassesProb(self):
         l = len(self.sequencesLocations)
         # dist = dict()
         # for key,value in self.classes.iteritems():
         #     dist[key] = value/l
-        return [(key,float(value)/l) for (key,value) in self.classes.iteritems()]
+        return [(key, float(value) / l) for (key, value) in self.classes.iteritems()]
 
     def __len__(self):
         return len(self.sequencesLocations)
+
+    def __add__(self, other):
+        if type(other) != Dataset and self.getField() == other.getField():
+            raise Exception("not the same type")
+        d = Dataset(field=self.field)
+        d.sequencesLocations = self.sequencesLocations + other.getSequencesLocations()
+        d.classes = self.classes + other.getClasses()
+        return d
 
 
 if __name__ == "__main__":

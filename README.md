@@ -13,9 +13,9 @@ An implementation of shapelets extraction base on a paper found [here](http://al
 - [x] implement sequence distance with early abandon function
 - [x] test sequence distance with early abandon function
 - [x] implement optimal split point function
-- [ ] test optimal split point function
+- [x] test optimal split point function
 - [x] implement calculate information gain function
-- [ ] test implement calculate information gain function
+- [x] test implement calculate information gain function
 - [ ] implement check candidate function
 - [ ] test check candidate function
 - [ ] implement entropy early pruning function

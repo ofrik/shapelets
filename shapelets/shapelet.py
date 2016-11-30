@@ -5,6 +5,7 @@ import math
 from random import uniform
 
 from shapelets.utils.utils import GenerateSubsequences, Gain
+from shapelets.models import *
 
 
 def FindingShapeletBF(D, maxlen, minlen):
@@ -25,23 +26,6 @@ def GenerateCandidates(D, minlen, maxlen):
             for s in GenerateSubsequences(T.getValues(), l):
                 yield s
 
-
-def OptimalSplitPoint(obj_hist):
-    bestChosen = -1
-    bestGain = -1
-    sortedItems = sorted(obj_hist.items(), key=lambda x: x[0])
-    for i in range(1, len(sortedItems)):
-        chosen = uniform(sortedItems[i - 1][0], sortedItems[i][0])
-        print "between %s and %s choose %s" % (sortedItems[i - 1][0], sortedItems[i][0], chosen)
-        D1 = np.array([x[1] for x in sortedItems[:i]])
-        D2 = np.array([x[1] for x in sortedItems[i:]])
-        gain = Gain(D1 + D2, D1, D2)
-        if gain > bestGain:
-            bestGain = gain
-            bestChosen = chosen
-    return bestChosen
-
-
 def CheckCandidate(D, S):
     objects_histogram = {}
     for T in D.getSequencesGenerator():
@@ -49,20 +33,36 @@ def CheckCandidate(D, S):
         if dist not in objects_histogram:
             objects_histogram[dist] = []
         objects_histogram[dist].append(T)
-    return CalculateInformationGain(objects_histogram)
+    return CalculateInformationGain(objects_histogram,D.getField())
 
 
-def CalculateInformationGain(obj_hist):
-    # TODO combine with @OptimalSplitPoint
-    split_dist = OptimalSplitPoint(obj_hist)
-    D1 = []
-    D2 = []
-    for d in obj_hist.iteritems():
-        if d[0] < split_dist:
-            D1 += d[1]
-        else:
-            D2 += d[1]
-    return Gain(D1 + D2, D1, D2)
+def CalculateInformationGain(obj_hist,field):
+    def OptimalSplitPoint(obj_hist,field):
+        bestChosen = -1
+        bestGain = -1
+        sortedItems = sorted(obj_hist.items(), key=lambda x: x[0])
+        for i in range(1, len(sortedItems)):
+            chosen = uniform(sortedItems[i - 1][0], sortedItems[i][0])
+            print "between %s and %s choose %s" % (sortedItems[i - 1][0], sortedItems[i][0], chosen)
+            split1 = [item for sublist in sortedItems[:i] for item in sublist[1]]
+            split2 = [item for sublist in sortedItems[i:] for item in sublist[1]]
+            D1 = Dataset(split1,field)
+            D2 = Dataset(split2,field)
+            gain = Gain(D1 + D2, D1, D2)
+            if gain > bestGain:
+                bestGain = gain
+                bestChosen = chosen
+        return bestChosen,bestGain
+    return OptimalSplitPoint(obj_hist,field)[1]
+    # split_dist = OptimalSplitPoint(obj_hist,field)
+    # D1 = Dataset(field=field)
+    # D2 = Dataset(field=field)
+    # for key,value in obj_hist.iteritems():
+    #     if key < split_dist:
+    #         D1.addSequencesLocations(value)
+    #     else:
+    #         D2.addSequencesLocations(value)
+    # return Gain(D1 + D2, D1, D2)
 
 
 def EntropyEarlyPrune(bsf_gain, dist_hist, C_A, C_B):
