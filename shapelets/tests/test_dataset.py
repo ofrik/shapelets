@@ -43,15 +43,15 @@ class TestDataset(TestCase):
     def test_getSequencesGenerator(self):
         lst = ["resources/disks/failed/5XW0L6BV.csv.gz", "resources/disks/run/5VMJW1LH.csv.gz"]
         d = Dataset(lst, "smart_1_normalized")
-        s1 = Sequence.loadCSVSequence("resources/disks/failed/5XW0L6BV.csv.gz","smart_1_normalized")
-        s2 = Sequence.loadCSVSequence("resources/disks/run/5VMJW1LH.csv.gz","smart_1_normalized")
-        itr = iter(d.getSequencesGenerator())
+        s1 = Sequence.loadCSVSequence("resources/disks/failed/5XW0L6BV.csv.gz", "smart_1_normalized", 1, )
+        s2 = Sequence.loadCSVSequence("resources/disks/run/5VMJW1LH.csv.gz", "smart_1_normalized", 1, )
+        itr = iter(d.getSequencesGeneratorLazy())
         s3 = itr.next()
         s4 = itr.next()
         self.assertEqual(s1,s3)
         self.assertEqual(s2,s4)
         d = Dataset(lst, "smart_1_normalized")
-        self.assertEqual(type(d.getSequencesGenerator()), types.GeneratorType)
+        self.assertEqual(type(d.getSequencesGeneratorLazy()), types.GeneratorType)
 
     def test_getClassesProb(self):
         lst = ["resources/disks/failed/5XW0L6BV.csv.gz", "resources/disks/run/5VMJW1LH.csv.gz"]

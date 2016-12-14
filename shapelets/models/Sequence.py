@@ -1,6 +1,7 @@
 __author__ = 'Ofri'
 
 import pandas as pd
+import numpy as np
 
 
 class Sequence(object):
@@ -27,7 +28,7 @@ class Sequence(object):
     def __eq__(self, other):
         if type(other) != Sequence:
             return False
-        return self.getLabel() == other.getLabel() and self.getValues() == other.getValues()
+        return self.getLabel() == other.getLabel() and np.array_equal(self.getValues(),other.getValues())
 
     def __len__(self):
         return len(self.values)
@@ -35,12 +36,18 @@ class Sequence(object):
     def __getitem__(self, item):
         return self.values[item]
 
+    def toString(self):
+        return "_".join(self.values)
+
     @staticmethod
-    def loadCSVSequence(path, field, compression="gzip"):
+    def loadCSVSequence(path, fields, observationPeriod=None, predictionPeriod=None, compression="gzip"):
+        # print "loading %s"%(path)
         df = pd.read_csv(path, compression=compression)
         l = "failed" if "failed" in path else "run"
         # TODO: get only window of the sequence that will be defined
-        return Sequence(list(df[field].values), l, src=path)
+        if observationPeriod is None and predictionPeriod is None:
+            return Sequence(list(df[fields].values), l, src=path)
+        return Sequence(list(df[fields].values[-predictionPeriod-observationPeriod:-predictionPeriod]), l, src=path)
 
 
 if __name__ == "__main__":
