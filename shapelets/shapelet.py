@@ -10,7 +10,7 @@ import random
 from multiprocessing import Pool
 from shapelets.utils.utils import timeit
 
-MIN_SEQUENCE_SIZE = 2
+MIN_SEQUENCE_SIZE = 3
 
 
 def FindingShapeletBF(D, minlen, maxlen):
@@ -54,7 +54,19 @@ def FindKShapelet(D, K, minlen, maxlen):
         kbest.append((bsf_gain, S))
         kbest = sorted(kbest, key=lambda x: x[0])[-K:]
         worst_best_gain = kbest[0][0]
-    return kbest
+    return [s[1] for s in kbest]
+
+def ShapeletsTransform(S,D):
+    X = []
+    Y = []
+    for T in D.getSequencesGenerator():
+        transformed = []
+        for s in S:
+            dist = SubsequenceDistanceEarlyAbandon(T,s)[0]
+            transformed.append(dist)
+        X.append(transformed)
+        Y.append(T.getLabel())
+    return X,Y
 
 def EstimateMinAndMax(D):
     shapelets = []
@@ -146,7 +158,6 @@ def EntropyEarlyPrune(bsf_gain, dist_hist, C_A, C_B, field):
     if CalculateInformationGain(pred_dist_hist, field) > bsf_gain:
         return False
     return True
-
 
 def SubsequenceDistanceEarlyAbandon(T, S):
     min_dist = np.inf

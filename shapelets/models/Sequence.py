@@ -43,7 +43,7 @@ class Sequence(object):
     def loadCSVSequence(path, fields, observationPeriod=None, predictionPeriod=None, compression="gzip"):
         # print "loading %s"%(path)
         df = pd.read_csv(path, compression=compression)
-        l = "failed" if "failed" in path else "run"
+        l = 1 if "failed" in path else 0
         # TODO: get only window of the sequence that will be defined
         if observationPeriod is None and predictionPeriod is None:
             return Sequence(list(df[fields].values), l, src=path)
