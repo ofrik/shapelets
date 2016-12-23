@@ -62,7 +62,7 @@ def ShapeletsTransform(S,D):
     for T in D.getSequencesGenerator():
         transformed = []
         for s in S:
-            dist = SubsequenceDistanceEarlyAbandon(T,s)[0]
+            dist = SubsequenceDistanceEarlyAbandon(T,s)
             transformed.append(dist)
         X.append(transformed)
         Y.append(T.getLabel())
@@ -75,7 +75,7 @@ def EstimateMinAndMax(D):
         D_ = Dataset(sequences=D.getSequences()[:10],fields=D.getFields(),observationPeriod=D.getObservationPeriod(),predictionPeriod=D.getPredictionPeriod())
         foundShepelets = FindKShapelet(D_,10,MIN_SEQUENCE_SIZE,D_.getObservationPeriod())
         shapelets += foundShepelets
-    shapelets.sort(key=len,reverse=True)
+    shapelets.sort(key=len)
     min = len(shapelets[25])
     max = len(shapelets[75])
     return min,max
@@ -99,7 +99,7 @@ def CheckCandidate(D, S, worst_best_gain, toTryToPrune=False,parallel=False):
         if parallel:
             pool.apply_async(SubsequenceDistanceEarlyAbandon,args=(T,S),callback=aggregator)
         else:
-            dist = SubsequenceDistanceEarlyAbandon(T, S)[0]
+            dist = SubsequenceDistanceEarlyAbandon(T, S)
             if dist not in objects_histogram:
                 objects_histogram[dist] = []
             objects_histogram[dist].append(T)
@@ -171,12 +171,12 @@ def SubsequenceDistanceEarlyAbandon(T, S):
                     d = 0
                     # print "is nan"
                 sum_dist = sum_dist + d
-                if sum_dist > min_dist:
-                    stop = True
-                    break
+            if sum_dist > min_dist:
+                stop = True
+                break
         if not stop:
             min_dist = sum_dist
-    return 0,T.getSrc() if min_dist == 0 else math.log(min_dist),T.getSrc()
+    return 0 if min_dist == 0 else math.log(min_dist)
 
 
 if __name__ == "__main__":

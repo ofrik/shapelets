@@ -100,14 +100,14 @@ class Dataset(object):
         pass
 
     def __len__(self):
-        return len(self.sequencesLocations)
+        return len(self.sequences)
 
     def __add__(self, other):
         if type(other) != Dataset and self.getFields() == other.getFields():
             raise Exception("not the same type")
-        d = Dataset(fields=self.fields)
-        d.sequencesLocations = self.sequencesLocations + other.getSequencesLocations()
-        d.classes = self.classes + other.getClasses()
+        d = Dataset(sequences=self.getSequences()+other.getSequences(),fields=self.fields)
+        # d.sequencesLocations = self.sequencesLocations + other.getSequencesLocations()
+        # d.classes = self.classes + other.getClasses()
         return d
 
 
