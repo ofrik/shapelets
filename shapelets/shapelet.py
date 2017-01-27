@@ -39,8 +39,9 @@ def FindKShapelet(D, K, minlen, maxlen):
     kbest = []
     counter = 0
     gains = dict()
+    number_of_candidates = len(list(GenerateCandidates(D, minlen, maxlen)))
     for S in GenerateCandidates(D, minlen, maxlen):
-        print "scanned %s candidates" % counter
+        print "scanned %s/%s candidates" % (counter,number_of_candidates)
         if str(S) in gains:
             print "used cache"
             counter += 1
